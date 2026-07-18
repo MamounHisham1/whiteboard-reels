@@ -25,15 +25,24 @@ If missing in all three, install from the official registry or skip it — rende
 
 ## Required environment (NO secrets in this skill)
 
-- `OPENCODE_KEY` — bearer token for mimo-v2.5 via opencode zen (verification gate).
-- `ELEVENLABS_API_KEY` — ElevenLabs key (Brian voice). Falls back to Kokoro if unset or quota-exhausted.
-- `ELEVEN_VOICE` (optional) — voice id, default `nPczCzI2devNBz1zQrb` (Brian).
-- `KOKORO_PYTHON` (optional) — path to a kokoro-capable python, default `/tmp/kokoro-env/bin/python3`.
+This skill ships with NO hardcoded keys. You must set two env vars before building. See
+`references/setup.md` for where to get each key and how to persist it.
 
-If `OPENCODE_KEY` is missing, **stop and ask** — verification cannot run without it.
+- `OPENCODE_KEY` — **required**. Bearer token for mimo-v2.5 via opencode zen (the verification gate). Get it: https://opencode.ai/zen
+- `ELEVENLABS_API_KEY` — **required for Brian voice**. Get it: https://elevenlabs.io (free tier = 10k chars/mo). Falls back to Kokoro if unset, but Kokoro only works if installed locally (see setup.md).
+- `ELEVEN_VOICE` (optional) — voice id, default `nPczCjzI2devNBz1zQrb` (Brian).
+- `KOKORO_PYTHON` (optional) — kokoro-capable python for the fallback, default `/tmp/kokoro-env/bin/python3`.
+
+Quick setup:
+```bash
+cp skills/whiteboard-reels/.env.example .env   # then edit .env with your keys
+set -a; source .env; set +a
+python3 skills/whiteboard-reels/scripts/check_env.py   # verify before building
+```
 
 ## The flow (per video)
 
+0. **Check env** — `python3 scripts/check_env.py`. If `OPENCODE_KEY` or `ELEVENLABS_API_KEY` is missing, **stop and tell the user** — show them `references/setup.md` and the `export` commands. Do NOT proceed to scaffold until required vars are set.
 1. **Scaffold** — `scripts/scaffold.py <slug>` creates `videos/<slug>/` with `script.json` template + `remotion-project/` seeded from `assets/` (Primitives.tsx, theme.ts, package.json, public/).
 2. **Write the script** — edit `script.json`: `{title:"SYSTEM DESIGN", headline:"<TOPIC>", voice:"<id>", scenes:[{id,text}...]}`. Aim 15-18 scenes, ~150-165s narration. Follow `references/script-template.md` for the narrative arc.
 3. **Generate TTS** — `scripts/tts.py <slug>` → per-scene audio + `timing.json` + `full_narration.mp3`. Tries ElevenLabs Brian first; on quota/HTTP error, auto-falls back to Kokoro `am_michael` and prints `VOICE_USED=am_michael`.

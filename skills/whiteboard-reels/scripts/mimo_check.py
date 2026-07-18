@@ -10,6 +10,8 @@ Usage:
 Env: OPENCODE_KEY required (bearer token for opencode zen).
 """
 import base64, json, os, sys, urllib.request, urllib.error
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _envloader  # noqa: F401  — auto-loads .env if present
 
 FOCUSES = {
     "persistent-canvas": (

@@ -17,6 +17,8 @@ Env:
   KOKORO_PYTHON       optional, default /tmp/kokoro-env/bin/python3
 """
 import json, os, subprocess, sys, urllib.request, urllib.error
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _envloader  # noqa: F401  — auto-loads .env if present
 
 SLUG = sys.argv[1] if len(sys.argv) > 1 else None
 if not SLUG:

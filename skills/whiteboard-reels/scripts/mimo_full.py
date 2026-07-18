@@ -9,6 +9,8 @@ Usage:
 Env: OPENCODE_KEY required.
 """
 import base64, json, os, sys, urllib.request, urllib.error
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _envloader  # noqa: F401  — auto-loads .env if present
 
 if len(sys.argv) < 2:
     print("usage: mimo_full.py <video.mp4> [label]", file=sys.stderr); sys.exit(2)
