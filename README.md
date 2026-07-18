@@ -29,12 +29,36 @@ topic
 
 ## Install
 
-This is a skills.sh skill. Drop the `whiteboard-reels/` folder into your agent's skills directory:
-- Claude Code / ZCode: `~/.claude/skills/` or `~/.zcode/skills/`
-- Generic agents: `~/.agents/skills/`
+Install into all your agents (Claude Code, Codex, Cursor, OpenCode, and [70+ more](https://skills.sh)):
 
 ```bash
-git clone https://github.com/MamounHisham1/whiteboard-reels ~/.claude/skills/whiteboard-reels
+npx skills add MamounHisham1/whiteboard-reels
+```
+
+Install into a specific agent only:
+
+```bash
+npx skills add MamounHisham1/whiteboard-reels -a claude-code
+```
+
+Install globally (available across all projects):
+
+```bash
+npx skills add MamounHisham1/whiteboard-reels -g
+```
+
+Use it once without installing:
+
+```bash
+npx skills use MamounHisham1/whiteboard-reels
+```
+
+Manual install (clone into your agent's skills dir):
+
+```bash
+# Claude Code / ZCode
+git clone https://github.com/MamounHisham1/whiteboard-reels /tmp/wbr && \
+  cp -r /tmp/wbr/skills/whiteboard-reels ~/.claude/skills/
 ```
 
 ## Requirements
@@ -50,17 +74,17 @@ git clone https://github.com/MamounHisham1/whiteboard-reels ~/.claude/skills/whi
 export OPENCODE_KEY=sk-...
 export ELEVENLABS_API_KEY=sk_...
 
-python3 scripts/scaffold.py my-topic --headline "MY TOPIC"
+python3 skills/whiteboard-reels/scripts/scaffold.py my-topic --headline "MY TOPIC"
 # edit videos/my-topic/script.json (write ~15-18 scene beats)
-python3 scripts/tts.py my-topic
+python3 skills/whiteboard-reels/scripts/tts.py my-topic
 # write videos/my-topic/remotion-project/src/scenes/Chapter1.tsx etc.
 cd videos/my-topic/remotion-project && npm install
 npx remotion render <Composition> out/video.mp4
-python3 scripts/save_version.py my-topic
-python3 scripts/mimo_full.py out/video.mp4 my-topic
+python3 skills/whiteboard-reels/scripts/save_version.py my-topic
+python3 skills/whiteboard-reels/scripts/mimo_full.py out/video.mp4 my-topic
 ```
 
-See `SKILL.md` for the full workflow and `references/` for the design language, build pipeline, and the mimo verification protocol.
+See `skills/whiteboard-reels/SKILL.md` for the full workflow and `skills/whiteboard-reels/references/` for the design language, build pipeline, and the mimo verification protocol.
 
 ## Why not the cloud `remotion-render` skill?
 The bundled `remotion-render` skill renders raw TSX via a cloud CLI. That's great for one-off animations, but the whiteboard look needs a full local project (bundled Primitives, palette, fonts, audio-driven timing, saved versions). This skill bundles those as `assets/` and uses `npx remotion render` locally. See `references/remotion-render-note.md`.
