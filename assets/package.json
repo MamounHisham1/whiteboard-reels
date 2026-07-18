@@ -1,0 +1,25 @@
+{
+  "name": "remotion-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "remotion render ConsistentHashing out/video.mp4",
+    "preview": "remotion studio"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@fontsource/nunito": "^5.2.7",
+    "@fontsource/patrick-hand": "^5.2.8",
+    "@fontsource/permanent-marker": "^5.2.7",
+    "@remotion/bundler": "^4.0.490",
+    "@remotion/cli": "^4.0.490",
+    "@remotion/google-fonts": "^4.0.490",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "remotion": "^4.0.490"
+  }
+}
