@@ -44,20 +44,38 @@ Override the voice id if you want a different narrator. Default is Brian:
 export ELEVEN_VOICE=nPczCjzI2devNBz1zQrb
 ```
 
-## Optional: Kokoro fallback (KOKORO_PYTHON)
+## Optional: Kokoro fallback (local, no API key)
 
-If ElevenLabs is unavailable or quota-exhausted, `tts.py` falls back to Kokoro (`am_michael`
-voice). **Kokoro is not bundled** — it only works if you've installed it locally:
+If ElevenLabs is unavailable or quota-exhausted, fall back to Kokoro (`am_michael` voice).
+**Kokoro is not bundled** — install it locally. There are two Kokoro paths; use whichever
+matches what's installed:
 
+**Preferred on this box — `kokoro_onnx` (lighter, int8 ONNX model):** driven by
+`scripts/tts_kokoro_onnx.py`. This is the path that actually shipped the last batch.
 ```bash
 python -m venv /tmp/kokoro-env
+/tmp/kokoro-env/bin/pip install kokoro-onnx soundfile numpy
+# download the model + voices into /tmp/kokoro-env/ :
+#   kokoro-v1.0.int8.onnx   and   voices-v1.0.bin
+# then:
+python3 scripts/tts_kokoro_onnx.py <slug>          # writes audio/ FLAT + wires public/narration.mp3
+```
+
+**Alternative — `kokoro` (KModel/KPipeline):** driven by `tts.py`'s built-in fallback,
+gated by `KOKORO_PYTHON`.
+```bash
 /tmp/kokoro-env/bin/pip install kokoro soundfile
 export KOKORO_PYTHON=/tmp/kokoro-env/bin/python3
 ```
 
-Caveat: Kokoro's `am_michael` sounds different from Brian, so using it **breaks voice
-consistency** across your series. The skill prints a loud warning when this happens. For a
-consistent series, keep ElevenLabs Brian as the primary voice.
+Caveats:
+- Kokoro's `am_michael` sounds different from Brian, so using it **breaks voice consistency**
+  vs. earlier Brian videos. The tools flag it loudly.
+- **When quota is gone for a whole batch, keep the ENTIRE batch on the same fallback voice**
+  (`am_michael`) so at least that batch is internally consistent. Do not mix Brian and Kokoro
+  within one run.
+- `tts_kokoro_onnx.py` writes to `audio/timing.json` (flat, no engine subdir). `theme.ts`
+  `loadTiming()` checks that flat path first, so no extra wiring is needed.
 
 ## Using a .env file
 

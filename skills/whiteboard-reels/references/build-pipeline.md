@@ -4,9 +4,11 @@
 ```
 videos/<slug>/
 ├── script.json                      # title, headline, voice, scenes[]
-├── audio/
-│   └── elevenlabs/                  # per-scene mp3/wav, timing.json, full_narration.mp3
-│       └── (or audio/kokoro/ if fallback ran)
+├── audio/                           # per-scene wav, timing.json, full_narration.mp3/.wav
+│   │                                #   tts_kokoro_onnx.py writes here FLAT (no subdir)
+│   └── elevenlabs/ | kokoro/        #   tts.py writes under an engine subdir instead
+│                                    # theme.ts loadTiming() checks audio/timing.json FIRST,
+│                                    #   then the engine subdirs
 └── remotion-project/
     ├── package.json                 # pinned deps (see assets/package.json)
     ├── public/
@@ -56,8 +58,13 @@ npx remotion render <CompositionId> reels/<slug>_reels.mp4 --scale 3
 ```
 
 ## Timing derivation
-- `timing.json` is produced by `scripts/tts.py` and records `{scene_id: {start, duration, end}}`
-  in seconds, derived from real `ffprobe` durations of each scene's wav, with 0.12s gaps.
+- `timing.json` is produced by `scripts/tts.py` (engine subdir) or `scripts/tts_kokoro_onnx.py`
+  (flat `audio/`), recording `{scene_id: {start, duration, end}}` in seconds, derived from real
+  per-scene wav durations with 0.12s gaps.
+- Most scene `theme.ts` files load `timing.json` at build time (see `assets/theme.ts`
+  `loadTiming()`, which now checks the flat `audio/timing.json` path first). If a topic's
+  `theme.ts` instead hardcodes an inline `const timing = {...}` table, regenerate it from the
+  real audio with `scripts/patch_theme_timing.py <slug>` after running TTS.
 - `theme.ts` loads timing.json at build time and converts to frames (`Math.round(sec * 30)`).
 - `DURATION_SEC` = total narration length + ~0.8s tail. `Root.tsx` uses
   `Math.round(DURATION_SEC * 30)` as the composition duration.

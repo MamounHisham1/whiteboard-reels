@@ -62,6 +62,12 @@ render v1  ->  run 6 single-focus checks  ->  run whole-video scan
 - **Kill hung calls fast.** mimo sometimes hangs on large videos. If a call exceeds ~5 min,
   kill it and retry once; if it hangs again, flag it to the user and move on rather than burn
   the session. The user's patience for hung mimo calls is near zero.
+- **HTTP 429 = usage limit, not a hang.** opencode zen enforces a rolling **5-hour usage
+  limit**. When hit, `mimo_check.py`/`mimo_full.py` return `HTTP 429: {"type":"GoUsageLimitError",
+  ... "Resets in NNmin"}`. Retrying immediately will NOT help — it resets on a timer. When
+  this happens mid-batch: finish everything else (renders, versions, Reels), verify by eye +
+  `ffprobe`/frame-extraction in the meantime, mark the mimo gate as a deferred/blocked TODO
+  with the reset time, and retry once the window resets. Do not spin retrying a 429.
 - **Don't trust a single whole-video pass** if the single-focus checks disagree. Re-run the
   disputed check rather than declaring done.
 

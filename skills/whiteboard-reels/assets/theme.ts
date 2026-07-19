@@ -31,9 +31,13 @@ type Timing = Record<string, { start: number; duration: number; end: number }>;
 
 function loadTiming(): Timing {
   // Look in a few likely locations relative to the project.
+  // Include the FLAT audio/timing.json path — gen_kokoro / kokoro_onnx writes there,
+  // not under an engine subdir. Missing this path silently yields a wrong-length render.
   const candidates = [
+    path.join(__dirname, "..", "audio", "timing.json"),
     path.join(__dirname, "..", "audio", "elevenlabs", "timing.json"),
     path.join(__dirname, "..", "audio", "kokoro", "timing.json"),
+    path.join(process.cwd(), "audio", "timing.json"),
     path.join(process.cwd(), "audio", "elevenlabs", "timing.json"),
     path.join(process.cwd(), "audio", "kokoro", "timing.json"),
   ];

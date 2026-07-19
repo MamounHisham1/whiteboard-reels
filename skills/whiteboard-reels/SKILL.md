@@ -2,8 +2,8 @@
 name: whiteboard-reels
 description: "Make hand-drawn whiteboard-style explainer Reels videos (system-design / educational topics) that match a reference visual theme exactly. Full pipeline per video: script.json -> ElevenLabs Brian TTS (Kokoro fallback) -> Remotion scenes with self-drawing persistent-canvas animation -> render 360x640 -> mimo AI verification loop (single-focus per-issue checks + final whole-video scan, auto-fix until clean) -> save every version -> render 1080x1920 Reels. Use when the user wants to create, rebuild, fix, or batch-produce whiteboard/scribe educational videos, system-design explainers, or reels matching a reference. Triggers: whiteboard video, scribe video, explainer reel, system design reel, remotion educational video, mimo verify video, content series, batch produce videos."
 metadata:
-  version: 1.0.0
-  author: MamounHisham1
+  version: 1.1.0
+  author: *************
   skills_sh: true
 ---
 
@@ -45,10 +45,10 @@ python3 skills/whiteboard-reels/scripts/check_env.py   # verify before building
 0. **Check env** — `python3 scripts/check_env.py`. If `OPENCODE_KEY` or `ELEVENLABS_API_KEY` is missing, **stop and tell the user** — show them `references/setup.md` and the `export` commands. Do NOT proceed to scaffold until required vars are set.
 1. **Scaffold** — `scripts/scaffold.py <slug>` creates `videos/<slug>/` with `script.json` template + `remotion-project/` seeded from `assets/` (Primitives.tsx, theme.ts, package.json, public/).
 2. **Write the script** — edit `script.json`: `{title:"SYSTEM DESIGN", headline:"<TOPIC>", voice:"<id>", scenes:[{id,text}...]}`. Aim 15-18 scenes, ~150-165s narration. Follow `references/script-template.md` for the narrative arc.
-3. **Generate TTS** — `scripts/tts.py <slug>` → per-scene audio + `timing.json` + `full_narration.mp3`. Tries ElevenLabs Brian first; on quota/HTTP error, auto-falls back to Kokoro `am_michael` and prints `VOICE_USED=am_michael`.
+3. **Generate TTS** — `scripts/tts.py <slug>` → per-scene audio + `timing.json` + `full_narration.mp3`. Tries ElevenLabs Brian first; on quota/HTTP error, auto-falls back to Kokoro `am_michael` and prints `VOICE_USED=am_michael`. If the `kokoro` KModel/KPipeline path isn't installed but `kokoro_onnx` is, run `scripts/tts_kokoro_onnx.py <slug>` instead (writes `audio/timing.json` flat + copies `public/narration.mp3`; `theme.ts` reads the flat path first). **When ElevenLabs quota is exhausted for a whole batch, keep the ENTIRE batch on `am_michael`** so that batch stays internally consistent — don't mix voices within one run.
 4. **Write the Remotion scenes** — original diagrams for THIS topic. Copy font-loading + dependency set from the reference project. See `references/design-language.md` (exact palette, fonts, animation mechanics) and `references/build-pipeline.md`.
 5. **Render 360x640** — `npx remotion render <composition> out/video.mp4`. Save a versioned copy: `cp out/video.mp4 remotion-project/versions/video_v1.mp4` (see `scripts/save_version.py`).
-6. **Verify with mimo** — `references/mimo-verification.md`. Run six **single-focus** checks, then one **whole-video** scan. Auto-fix + re-render until whole-video returns `NO DEFECTS FOUND` or the cap is hit.
+6. **Verify with mimo** — `references/mimo-verification.md`. Run six **single-focus** checks, then one **whole-video** scan. Auto-fix + re-render until whole-video returns `NO DEFECTS FOUND` or the cap is hit. If mimo returns **HTTP 429 `GoUsageLimitError`** (opencode's rolling 5-hour usage limit), that is NOT a hang — retrying won't help until the window resets. Finish renders/versions/Reels, verify by eye + `ffprobe` in the meantime, mark the mimo gate as a deferred TODO with the reset time, and retry after reset.
 7. **Render Reels 1080x1920** — `npx remotion render <composition> reels/<slug>_reels.mp4 --scale 3`.
 
 ## The verification loop (core of this skill)
@@ -87,7 +87,9 @@ Read `references/user-style.md` once. Short version: work immediately (no ceremo
 - `references/remotion-render-note.md` — why we use a local project, not the cloud belt CLI.
 - `references/user-style.md` — working-style notes for this skill's user.
 - `scripts/scaffold.py` — create a new video folder + seed the Remotion project.
-- `scripts/tts.py` — ElevenLabs Brian → Kokoro fallback, with timing.json.
+- `scripts/tts.py` — ElevenLabs Brian → Kokoro (KModel/KPipeline) fallback, with timing.json.
+- `scripts/tts_kokoro_onnx.py` — local Kokoro via `kokoro_onnx` (int8 ONNX); writes `audio/` flat + wires `public/narration.mp3`. The fallback that shipped the last batch.
+- `scripts/patch_theme_timing.py` — rewrite a scene's inline `timing`/`DURATION_SEC` block from `audio/timing.json` (for themes that hardcode timing instead of loading it).
 - `scripts/mimo_check.py` — single-focus mimo check (one of 6 categories).
 - `scripts/mimo_full.py` — whole-video mimo defect scan.
 - `scripts/save_version.py` — copy out/video.mp4 to versions/video_vN.mp4.
