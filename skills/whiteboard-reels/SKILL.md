@@ -3,7 +3,7 @@ name: whiteboard-reels
 description: "Make hand-drawn whiteboard-style explainer Reels videos (system-design / educational topics) that match a reference visual theme exactly. Full pipeline per video: script.json -> ElevenLabs Brian TTS (Kokoro fallback) -> Remotion scenes with self-drawing persistent-canvas animation -> render 360x640 -> mimo AI verification loop (single-focus per-issue checks + final whole-video scan, auto-fix until clean) -> save every version -> render 1080x1920 Reels. Use when the user wants to create, rebuild, fix, or batch-produce whiteboard/scribe educational videos, system-design explainers, or reels matching a reference. Triggers: whiteboard video, scribe video, explainer reel, system design reel, remotion educational video, mimo verify video, content series, batch produce videos."
 metadata:
   version: 1.1.0
-  author: *************
+  author: MamounHisham1
   skills_sh: true
 ---
 
