@@ -21,7 +21,7 @@
 
 ## Narrative arc (15-18 scenes, ~150-165s total)
 
-Each scene is ONE narration beat (~6-12s of audio). Match the reference's rhythm:
+Each scene is ONE narration beat (~6-12s of audio). Aim for this rhythm:
 
 **Chapter 1 — THE PROBLEM (scenes s1..sN, roughly s1-s10)**
 1. Set the stage — the system before the technique exists. ("Your app has one database...")
@@ -44,9 +44,9 @@ Each scene is ONE narration beat (~6-12s of audio). Match the reference's rhythm
 ## Length targets
 - Each scene's audio is ~6-12s. Total ~150-165s after 0.12s gaps between scenes.
 - If a scene's text is too long it'll blow the budget; keep each beat to 1-2 short sentences.
-- The reference video is ~165s; match within +/-15s.
+- Target ~150-165s total. Stay within +/-15s of that.
 
 ## Content originality
 This is a SERIES, not a template. Each video invents its own diagrams and scene structure to
-fit its topic — do NOT clone the consistent-hashing scenes. The only shared things are the
-look (palette/fonts/mechanics), the voice, and the narrative rhythm described above.
+fit its topic — do NOT copy any one video's scenes. The only shared things are the look
+(palette/fonts/mechanics), the voice, and the narrative rhythm described above.

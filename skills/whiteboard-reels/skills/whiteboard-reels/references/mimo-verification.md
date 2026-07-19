@@ -56,23 +56,23 @@ render v1  ->  run 6 single-focus checks  ->  run whole-video scan
 ```
 
 **Critical behaviors:**
-- **Fix the exact element mimo names**, not a neighbor. (The user will catch you fixing the
-  wrong thing — "no the overloaded word was placed well, i mean remove the white rectangle.")
+- **Fix the exact element mimo names**, not a neighbor. If mimo flags the rectangle, fix the
+  rectangle — don't touch the label next to it.
 - **Save every version** to `versions/video_vN.mp4` before re-rendering. Never overwrite.
 - **Kill hung calls fast.** mimo sometimes hangs on large videos. If a call exceeds ~5 min,
-  kill it and retry once; if it hangs again, flag it to the user and move on rather than burn
-  the session. The user's patience for hung mimo calls is near zero.
+  kill it and retry once; if it hangs again, flag it in the run log and move on rather than
+  burn time on a stuck call.
 - **HTTP 429 = usage limit, not a hang.** opencode zen enforces a rolling **5-hour usage
   limit**. When hit, `mimo_check.py`/`mimo_full.py` return `HTTP 429: {"type":"GoUsageLimitError",
   ... "Resets in NNmin"}`. Retrying immediately will NOT help — it resets on a timer. When
   this happens mid-batch: finish everything else (renders, versions, Reels), verify by eye +
-  `ffprobe`/frame-extraction in the meantime, mark the mimo gate as a deferred/blocked TODO
+  `ffprobe` in the meantime, mark the mimo gate as a deferred/blocked TODO
   with the reset time, and retry once the window resets. Do not spin retrying a 429.
 - **Don't trust a single whole-video pass** if the single-focus checks disagree. Re-run the
   disputed check rather than declaring done.
 
-## Reliability caveat (learned the hard way)
-mimo's whole-video rubric can self-contradict across rounds (e.g. score 3/5 -> 2/5 -> 3/5
-on the same video). That's WHY we use the constrained single-focus checks as the primary
-signal and the whole-video scan as the final gate. If the two disagree, trust the
-single-focus checks and investigate the specific frame mimo flagged.
+## Reliability caveat
+mimo's whole-video rubric can self-contradict across rounds on the same video. The
+constrained single-focus checks are therefore the primary signal; the whole-video scan is
+the final gate. If the two disagree, trust the single-focus checks and investigate the
+specific frame mimo flagged.

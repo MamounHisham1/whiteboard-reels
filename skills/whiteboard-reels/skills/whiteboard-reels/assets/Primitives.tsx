@@ -205,7 +205,7 @@ export const Clock12: React.FC<{
 };
 
 // ---------- Arc creep: reveal an arc along a circle between two angles ----------
-// Used for the consistent-hashing "only this arc moves" highlight.
+// Useful for highlighting "only this arc moves" in circular-layout diagrams.
 export const ArcCreep: React.FC<{
   cx: number; cy: number; r: number; fromDeg: number; toDeg: number; progress?: number;
   color?: string; width?: number;

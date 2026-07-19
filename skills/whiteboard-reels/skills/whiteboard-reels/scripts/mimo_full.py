@@ -17,6 +17,8 @@ if len(sys.argv) < 2:
 
 VIDEO = sys.argv[1]
 LABEL = sys.argv[2] if len(sys.argv) > 2 else os.path.basename(VIDEO)
+if not os.path.exists(VIDEO):
+    print(f"ERROR: video not found: {VIDEO}", file=sys.stderr); sys.exit(1)
 KEY = os.environ.get("OPENCODE_KEY")
 if not KEY:
     print("ERROR: OPENCODE_KEY env var is required.", file=sys.stderr); sys.exit(1)

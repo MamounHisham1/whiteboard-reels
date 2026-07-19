@@ -44,7 +44,7 @@ cd videos/<slug>/remotion-project
 npx remotion render <CompositionId> out/video.mp4
 ```
 
-**Save a version (never skip — the user watches all versions):**
+**Save a version (never skip — every render is preserved for review):**
 ```bash
 python3 <skill>/scripts/save_version.py videos/<slug>
 # -> versions/video_v<N+1>.mp4
@@ -78,8 +78,8 @@ npx remotion render <CompositionId> reels/<slug>_reels.mp4 --scale 3
 
 ## Writing ORIGINAL scenes (do not template-copy)
 - Study `assets/Primitives.tsx` for the available self-drawing primitives.
-- Design diagrams specific to your topic (a Bloom filter is bit-arrays + hash arrows; rate
-  limiting is a token bucket + leaking; LSM trees are stacked memtable+SSTables; etc.).
+- Design diagrams specific to your topic (a token bucket + leaking for rate limiting; stacked
+  memtable + SSTables for LSM trees; bit-arrays + hash arrows for a Bloom filter; etc.).
 - Choose fixed coordinates up front. The canvas is 360x640 — plan the layout across all
   three vertical thirds before writing a single `<g>`.
 - When in doubt about how a mechanic should look, consult the verification output (the

@@ -65,6 +65,8 @@ if len(sys.argv) < 3 or sys.argv[2] not in FOCUSES:
     print("focuses: " + " | ".join(FOCUSES), file=sys.stderr); sys.exit(2)
 
 VIDEO, FOCUS = sys.argv[1], sys.argv[2]
+if not os.path.exists(VIDEO):
+    print(f"ERROR: video not found: {VIDEO}", file=sys.stderr); sys.exit(1)
 KEY = os.environ.get("OPENCODE_KEY")
 if not KEY:
     print("ERROR: OPENCODE_KEY env var is required (no secrets hardcoded in this skill).", file=sys.stderr)

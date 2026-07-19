@@ -20,6 +20,6 @@ def _load_env():
                 key, _, val = line.partition("=")
                 key, val = key.strip(), val.strip().strip('"').strip("'")
                 if key and key not in os.environ:  # don't clobber real env
-                    os.environ[key] = val
+                    os.environ[key] = os.path.expanduser(val)  # expand ~/ paths
             return
 _load_env()

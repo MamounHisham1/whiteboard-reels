@@ -25,7 +25,7 @@ def skill_root():
         d = os.path.dirname(d)
     print("ERROR: could not locate skill root (assets/Primitives.tsx).", file=sys.stderr); sys.exit(1)
 
-ROOT = os.getcwd()
+ROOT = os.environ.get("VIDEOS_DIR", os.getcwd())
 SLUG = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("--") else None
 if not SLUG:
     print('usage: scaffold.py <slug> [--headline "TOPIC NAME"]', file=sys.stderr); sys.exit(2)
@@ -35,7 +35,7 @@ if "--headline" in sys.argv:
     HEADLINE = sys.argv[sys.argv.index("--headline") + 1]
 
 SKILL = skill_root()
-VIDEO_DIR = os.path.join(ROOT, "videos", SLUG)
+VIDEO_DIR = os.path.join(ROOT, "videos", SLUG) if os.path.basename(ROOT) != "videos" else os.path.join(ROOT, SLUG)
 PROJ_DIR = os.path.join(VIDEO_DIR, "remotion-project")
 
 if os.path.exists(VIDEO_DIR):
@@ -64,6 +64,7 @@ os.makedirs(os.path.join(PROJ_DIR, "public"), exist_ok=True)
 os.makedirs(os.path.join(PROJ_DIR, "out"), exist_ok=True)
 os.makedirs(os.path.join(PROJ_DIR, "versions"), exist_ok=True)
 os.makedirs(os.path.join(PROJ_DIR, "reels"), exist_ok=True)
+os.makedirs(os.path.join(src_dir, "scenes"), exist_ok=True)  # referenced by next-step hint
 
 print(f"[scaffold] created {VIDEO_DIR}")
 print(f"[scaffold] edit videos/{SLUG}/script.json  (write your ~15-18 scene beats)")

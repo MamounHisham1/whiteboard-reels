@@ -1,6 +1,6 @@
-// Design system matching the reference video's exact visual theme.
-// Same palette/fonts as the reference; scene timing is loaded from timing.json
-// (produced by scripts/tts.py) instead of hardcoded, so this file works for ANY topic.
+// Design system for the whiteboard-reels visual theme.
+// Scene timing is loaded from timing.json (produced by scripts/tts.py or
+// scripts/tts_kokoro_onnx.py) instead of hardcoded, so this file works for ANY topic.
 
 import * as fs from "fs";
 import * as path from "path";
